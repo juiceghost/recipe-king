@@ -1,12 +1,25 @@
 var express = require('express'),
     path = require('path'),
     app = express(),
-    bodyParser = require('body-parser');
+    bodyParser = require('body-parser'),
+    axios = require('axios'),
+    cachedRR = require('./cachedRandomRecipes'),
+    cors = require('cors');
+
+const URLS = {
+    'randomRecipes': 'https://api.spoonacular.com/recipes/random',
+    'recipeInfo': (id) => (`https://api.spoonacular.com/recipes/${id}/information`)
+}
+const API_KEY = "526eba0616874a9db294da2d1502ca37";
+const numberOfHits = 10;
+
+const useCache = true; // Set this to false to make requests from spoonacular, otherwise use cache
 
 var userName = 'Krille';
 console.log("userName is equal to " + userName)
 //set the port
 app.set('port', 5000);
+app.use(cors());
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
 
@@ -21,6 +34,22 @@ console.log(path.join(__dirname, 'public'))
     res.send('Hello World!');
 }); */
 
+const getRandomRecipes = () => {
+    try {
+      return axios.get(`${URLS.randomRecipes}?number=${numberOfHits}&apiKey=${API_KEY}`)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+app.get('/randomRecipes', (req, res) => {
+    // gör ett axios-anrop till spoonacular
+    // ta datan och skicka tillbaka som res till vår klient
+
+    // REACT (anropar) NODE (anropar) SPOON (svarar) NODE (svarar) REACT
+    const recipes = !useCache ? getRandomRecipes().then(response => res.send(response.data)) : res.send(cachedRR)
+    
+})
 app.get('/hello', (req, res) => {
     // https://www.digitalocean.com/community/tutorials/nodejs-serving-static-files-in-express
     
