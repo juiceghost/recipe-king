@@ -4,6 +4,7 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     axios = require('axios'),
     cachedRR = require('./cachedRandomRecipes'),
+    cachedRI = require ('./cachedRecipeInfo'),
     cors = require('cors');
 
 const URLS = {
@@ -11,12 +12,12 @@ const URLS = {
     'recipeInfo': (id) => (`https://api.spoonacular.com/recipes/${id}/information`)
 }
 const API_KEY = "526eba0616874a9db294da2d1502ca37";
-const numberOfHits = 10;
+const numberOfHits = 10; // Obs denna ska ni INTE använda
 
 const useCache = true; // Set this to false to make requests from spoonacular, otherwise use cache
 
 var userName = 'Krille';
-console.log("userName is equal to " + userName)
+//console.log("userName is equal to " + userName)
 //set the port
 app.set('port', 5000);
 app.use(cors());
@@ -28,7 +29,7 @@ app.use(bodyParser.json())
 //tell express that we want to use the public folder
 //for our static assets
 app.use(express.static(path.join(__dirname, 'public')));
-console.log(path.join(__dirname, 'public'))
+//console.log(path.join(__dirname, 'public'))
 /* app.get('/', (req, res) => {
     // https://www.digitalocean.com/community/tutorials/nodejs-serving-static-files-in-express
     res.send('Hello World!');
@@ -42,12 +43,37 @@ const getRandomRecipes = () => {
     }
   }
 
+const getRecipeInfo = (id) => {
+  try {
+    return axios.get(`${URLS.recipeInfo(id)}?apiKey=${API_KEY}`)
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+app.get(`/recipe/:id`, (req, res) => {
+    // gör ett axios-anrop till spoonacular
+    // ta datan och skicka tillbaka som res till vår klient
+    //console.log(req.params)
+    // REACT (anropar) NODE (anropar) SPOON (svarar) NODE (svarar) REACT
+    !useCache ? getRecipeInfo(req.params.id).then(response => res.send(response.data)) : res.send(cachedRI)
+    
+})
+
 app.get('/randomRecipes', (req, res) => {
     // gör ett axios-anrop till spoonacular
     // ta datan och skicka tillbaka som res till vår klient
 
     // REACT (anropar) NODE (anropar) SPOON (svarar) NODE (svarar) REACT
-    const recipes = !useCache ? getRandomRecipes().then(response => res.send(response.data)) : res.send(cachedRR)
+
+    // ER UPPGIFT: Denna endpoint anropas av klienten med en query param.
+    // Denna query param styr antalet recept som spoonacular skickar 
+    // Ta reda på och implementera en fix som gör att detta värde skickas vidare
+    // på det sättet som spoonacular förväntar sig
+    // Vänligen se https://stackabuse.com/get-query-strings-and-parameters-in-express-js/
+    // obs att det är OK att modifiera getRandomRecipes-funktionen. ALla sätt är bra
+
+    !useCache ? getRandomRecipes().then(response => res.send(response.data)) : res.send(cachedRR)
     
 })
 app.get('/hello', (req, res) => {

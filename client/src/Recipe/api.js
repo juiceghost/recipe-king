@@ -5,7 +5,7 @@ import * as API from '../constants/urls';
 const controller = new AbortController();
 const { signal } = controller;
 
-const numberOfHits = 10;
+const numberOfHits = 20;
 /*
 box-sizing: border-box;
     border: 2px solid rgba(0, 0, 0, .15);
@@ -72,7 +72,7 @@ const FetchRecipe = (props) => {
     // in i statet
     // rendera ut bilden :)
     useEffect(() => {
-        fetch(`${API.URLS.recipeInfo(props.recipe.id)}?apiKey=${API.API_KEY}`)
+        fetch(`${API.URLS.recipeInfo(props.recipe.id)}`)
             .then(response => response.json())
             .then(resData => {
                 // nu har vi fått ett resp
@@ -104,7 +104,7 @@ const FetchRecipes = () => {
     const [points, setPoints] = useState(Number(JSON.parse(localStorage.getItem('points'))) || 0)
 
     useEffect(() => {
-        fetch(`${API.URLS.randomRecipes}?number=${numberOfHits}&apiKey=${API.API_KEY}`)
+        fetch(`${API.URLS.randomRecipes}?number=${numberOfHits}`)
             .then(response => response.json())
             .then(resData => {
                 // nu har vi fått ett resp
