@@ -12,7 +12,7 @@ const URLS = {
     'recipeInfo': (id) => (`https://api.spoonacular.com/recipes/${id}/information`)
 }
 const API_KEY = "526eba0616874a9db294da2d1502ca37";
-const numberOfHits = 10; // Obs denna ska ni INTE använda
+//const numberOfHits = 10; // Obs denna ska ni INTE använda
 
 const useCache = true; // Set this to false to make requests from spoonacular, otherwise use cache
 
@@ -35,7 +35,7 @@ app.use(express.static(path.join(__dirname, 'public')));
     res.send('Hello World!');
 }); */
 
-const getRandomRecipes = () => {
+const getRandomRecipes = (numberOfHits) => {
     try {
       return axios.get(`${URLS.randomRecipes}?number=${numberOfHits}&apiKey=${API_KEY}`)
     } catch (error) {
@@ -63,6 +63,8 @@ app.get(`/recipe/:id`, (req, res) => {
 app.get('/randomRecipes', (req, res) => {
     // gör ett axios-anrop till spoonacular
     // ta datan och skicka tillbaka som res till vår klient
+    console.log(req.query.number) // { number: '20' }
+
 
     // REACT (anropar) NODE (anropar) SPOON (svarar) NODE (svarar) REACT
 
@@ -73,7 +75,7 @@ app.get('/randomRecipes', (req, res) => {
     // Vänligen se https://stackabuse.com/get-query-strings-and-parameters-in-express-js/
     // obs att det är OK att modifiera getRandomRecipes-funktionen. ALla sätt är bra
 
-    !useCache ? getRandomRecipes().then(response => res.send(response.data)) : res.send(cachedRR)
+    !useCache ? getRandomRecipes(req.query.number).then(response => res.send(response.data)) : res.send(cachedRR)
     
 })
 app.get('/hello', (req, res) => {

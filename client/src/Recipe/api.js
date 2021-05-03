@@ -5,7 +5,7 @@ import * as API from '../constants/urls';
 const controller = new AbortController();
 const { signal } = controller;
 
-const numberOfHits = 20;
+const numberOfHits = 2;
 /*
 box-sizing: border-box;
     border: 2px solid rgba(0, 0, 0, .15);
@@ -50,9 +50,9 @@ const RecipeItem = (props) => {
 
     return (
         <>
-            <RecipeListLI onClick={() => setRecipeDetail(props.recipe.id)}>
+            <RecipeListLI onClickCapture={() => setRecipeDetail(props.recipe.id)}>
                 {props.recipe.title}
-                {recipeDetail && <FetchRecipe recipe={props.recipe} />}
+                {recipeDetail && <FetchRecipe recipe={props.recipe} recipeDetail={recipeDetail} setRecipeDetail={setRecipeDetail} />}
             </RecipeListLI>
         </>
     );
@@ -89,7 +89,7 @@ const FetchRecipe = (props) => {
 
     return (
         <>{data &&
-             <DetailImageContainer onClick={() => setData(null)}>
+             <DetailImageContainer onClick={() => props.setRecipeDetail(null)}>
                 <img src={data.image} alt='Picture of food' />
             </DetailImageContainer> 
            /*  <DetailImageContainer image={data.image} /> */
