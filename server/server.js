@@ -14,7 +14,11 @@ const URLS = {
 const API_KEY = "526eba0616874a9db294da2d1502ca37";
 //const numberOfHits = 10; // Obs denna ska ni INTE använda
 
-const useCache = false; // Set this to false to make requests from spoonacular, otherwise use cache
+let useCache = false; // Set this to false to make requests from spoonacular, otherwise use cache
+function cacheHandler(req, res, next) {
+  useCache = req.query.cache ? JSON.parse(req.query.cache) : false;
+  next();
+}
 
 var userName = 'Krille';
 //console.log("userName is equal to " + userName)
@@ -51,7 +55,7 @@ const getRecipeInfo = (id) => {
   }
 }
 
-app.get(`/recipe/:id`, (req, res) => {
+app.get(`/recipe/:id`, cacheHandler, (req, res) => {
     // gör ett axios-anrop till spoonacular
     // ta datan och skicka tillbaka som res till vår klient
     //console.log(req.params)
@@ -61,7 +65,7 @@ app.get(`/recipe/:id`, (req, res) => {
     
 })
 
-app.get('/randomRecipes', (req, res) => {
+app.get('/randomRecipes', cacheHandler, (req, res) => {
     // gör ett axios-anrop till spoonacular
     // ta datan och skicka tillbaka som res till vår klient
     console.log(req.query.number) // { number: '20' }
@@ -76,7 +80,7 @@ app.get('/randomRecipes', (req, res) => {
     // Vänligen se https://stackabuse.com/get-query-strings-and-parameters-in-express-js/
     // obs att det är OK att modifiera getRandomRecipes-funktionen. ALla sätt är bra
     //res.status(401).send("Hej")
-    !useCache ? getRandomRecipes(req.query.number).then(response => res.send(response.data)) : res.send(cachedRR)
+    !useCache ? getRandomRecipes(req.query.number).then(response => res.send(Object.assign(response.data, { cache: false }))) : res.send(cachedRR)
     
 })
 app.get('/hello', (req, res) => {

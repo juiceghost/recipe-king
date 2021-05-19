@@ -5792,7 +5792,8 @@ const recipes = {
         "originalId": null,
         "spoonacularSourceUrl": "https://spoonacular.com/italian-meatloaf-with-hard-boiled-eggs-648176"
       }
-    ]
+    ],
+    "cache": true
   }
 
   module.exports = recipes;

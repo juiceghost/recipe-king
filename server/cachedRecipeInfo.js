@@ -749,7 +749,8 @@ const recipe = {
       }
     ],
     "originalId": null,
-    "spoonacularSourceUrl": "https://spoonacular.com/moroccan-chicken-tagine-652421"
+    "spoonacularSourceUrl": "https://spoonacular.com/moroccan-chicken-tagine-652421",
+    "cache": true
   }
 
 module.exports = recipe;
