@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
-
+import AOS from 'aos';
 import * as API from '../constants/urls';
 const controller = new AbortController();
 const { signal } = controller;
 
-const numberOfHits = 2;
+const numberOfHits = 10;
 /*
 box-sizing: border-box;
     border: 2px solid rgba(0, 0, 0, .15);
@@ -44,24 +44,24 @@ const DetailImageContainer = styled.div`
   }
 `
 
-
 const RecipeItem = (props) => {
     const [recipeDetail, setRecipeDetail] = useState(null);
-
+    useEffect(() => {
+        AOS.refresh();
+      }, []);
+      const delay = props.index * 150
     return (
-        <>
-            <RecipeListLI onClickCapture={() => setRecipeDetail(props.recipe.id)}>
+            <RecipeListLI data-aos-delay={delay} data-aos-once="true" data-aos="flip-up" data-aos-duration="500" onClickCapture={() => setRecipeDetail(props.recipe.id)}>
                 {props.recipe.title}
                 {recipeDetail && <FetchRecipe recipe={props.recipe} recipeDetail={recipeDetail} setRecipeDetail={setRecipeDetail} />}
             </RecipeListLI>
-        </>
     );
 }
 
 const RecipeList = (props) => (
     <RecipeListUL>
-        {props.recipes.map(recipe => (
-            <RecipeItem recipe={recipe} key={recipe.id} />
+        {props.recipes.map((recipe, index) => (
+            <RecipeItem recipe={recipe} key={recipe.id} index={index} />
         ))}
     </RecipeListUL>
 );

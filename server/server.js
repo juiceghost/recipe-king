@@ -14,7 +14,7 @@ const URLS = {
 const API_KEY = "526eba0616874a9db294da2d1502ca37";
 //const numberOfHits = 10; // Obs denna ska ni INTE använda
 
-let useCache = false; // Set this to false to make requests from spoonacular, otherwise use cache
+let useCache = true; // Set this to false to make requests from spoonacular, otherwise use cache
 function cacheHandler(req, res, next) {
   useCache = req.query.cache ? JSON.parse(req.query.cache) : false;
   next();
@@ -38,7 +38,6 @@ app.use(express.static(path.join(__dirname, 'public')));
     // https://www.digitalocean.com/community/tutorials/nodejs-serving-static-files-in-express
     res.send('Hello World!');
 }); */
-
 const getRandomRecipes = (numberOfHits) => {
     try {
       return axios.get(`${URLS.randomRecipes}?number=${numberOfHits}&apiKey=${API_KEY}`)
